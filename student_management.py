@@ -1,8 +1,21 @@
 import json
 import re
+import json
+import csv
+import xml.etree.ElementTree as ET
+import datetime
+import logging
 
-# Đường dẫn file JSON
-DATA_FILE = "students.json"
+# Cấu hình logging
+logging.basicConfig(filename="student_management.log", level=logging.INFO,
+                    format="%(asctime)s - %(levelname)s - %(message)s")
+
+# Định nghĩa đường dẫn file dữ liệu
+DATA_JSON = "students.json"
+DATA_CSV = "students.csv"
+DATA_XML = "students.xml"
+VERSION = "2.0"
+BUILD_DATE = datetime.datetime.now().strftime("%Y-%m-%d")
 
 # Danh sách khoa hợp lệ
 VALID_KHOA = ["Khoa Luật", "Khoa Tiếng Anh thương mại", "Khoa Tiếng Nhật", "Khoa Tiếng Pháp"]
@@ -13,14 +26,37 @@ VALID_TINH_TRANG = ["Đang học", "Đã tốt nghiệp", "Đã thôi học", "T
 # Hàm tải dữ liệu từ file JSON
 def load_data():
     try:
-        with open(DATA_FILE, "r", encoding="utf-8") as file:
+        with open(DATA_JSON, "r", encoding="utf-8") as file:
             return json.load(file)
     except (FileNotFoundError, json.JSONDecodeError):
         return []
 
+
+# Xuất dữ liệu sang CSV
+def export_csv():
+    students = load_data()
+    with open(DATA_CSV, "w", newline="", encoding="utf-8") as file:
+        writer = csv.DictWriter(file, fieldnames=students[0].keys())
+        writer.writeheader()
+        writer.writerows(students)
+    print("Xuất dữ liệu CSV thành công!")
+    logging.info("Dữ liệu được xuất sang CSV")
+
+# Nhập dữ liệu từ CSV
+def import_csv():
+    try:
+        with open(DATA_CSV, "r", encoding="utf-8") as file:
+            reader = csv.DictReader(file)
+            data = list(reader)
+            save_data(data)
+            print("Nhập dữ liệu từ CSV thành công!")
+            logging.info("Dữ liệu được nhập từ CSV")
+    except FileNotFoundError:
+        print("Không tìm thấy file CSV!")
+
 # Hàm lưu dữ liệu vào file JSON
 def save_data(data):
-    with open(DATA_FILE, "w", encoding="utf-8") as file:
+    with open(DATA_JSON, "w", encoding="utf-8") as file:
         json.dump(data, file, indent=4, ensure_ascii=False)
 
 # Hàm kiểm tra định dạng email
@@ -143,6 +179,7 @@ def search_student():
     else:
         print("Không tìm thấy sinh viên!")
 
+
 # Menu điều khiển
 def main():
     while True:
@@ -151,8 +188,11 @@ def main():
         print("2. Xóa sinh viên")
         print("3. Cập nhật thông tin sinh viên")
         print("4. Tìm kiếm sinh viên")
-        print("5. Thoát")
+        print("5. Xuất dữ liệu CSV")
+        print("6. Nhập dữ liệu từ CSV")
         
+        print("12. Thoát chương trình")
+
         choice = input("Chọn chức năng: ")
         
         if choice == "1":
@@ -164,6 +204,10 @@ def main():
         elif choice == "4":
             search_student()
         elif choice == "5":
+            export_csv()
+        elif choice == "6":
+            import_csv()
+        elif choice == "11":
             print("Thoát chương trình!")
             break
         else:
