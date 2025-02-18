@@ -178,7 +178,7 @@ def search_student():
             print(student)
     else:
         print("Không tìm thấy sinh viên!")
-        
+
 # Xuất dữ liệu sang XML
 def export_xml():
     students = load_data()
@@ -193,6 +193,12 @@ def export_xml():
     print("Xuất dữ liệu XML thành công!")
     logging.info("Dữ liệu được xuất sang XML")
 
+# Thêm chức năng hiển thị phiên bản ứng dụng
+def show_version():
+    print(f"Student Management System v{VERSION} - Build date: {BUILD_DATE}")
+    logging.info(f"Phiên bản: {VERSION}, Ngày build: {BUILD_DATE}")
+
+
 # Menu điều khiển
 def main():
     while True:
@@ -204,6 +210,7 @@ def main():
         print("5. Xuất dữ liệu CSV")
         print("6. Nhập dữ liệu từ CSV")
         print("7. Xuất dữ liệu XML")
+        print("8. Hiển thị phiên bản ứng dụng")
         print("12. Thoát chương trình")
 
         choice = input("Chọn chức năng: ")
@@ -222,6 +229,8 @@ def main():
             import_csv()
         elif choice == "7":
             export_xml()
+        elif choice == "8":
+            show_version()
         elif choice == "11":
             print("Thoát chương trình!")
             break
