@@ -178,7 +178,20 @@ def search_student():
             print(student)
     else:
         print("Không tìm thấy sinh viên!")
-
+        
+# Xuất dữ liệu sang XML
+def export_xml():
+    students = load_data()
+    root = ET.Element("students")
+    for student in students:
+        student_elem = ET.SubElement(root, "student")
+        for key, value in student.items():
+            child = ET.SubElement(student_elem, key)
+            child.text = value
+    tree = ET.ElementTree(root)
+    tree.write(DATA_XML, encoding="utf-8", xml_declaration=True)
+    print("Xuất dữ liệu XML thành công!")
+    logging.info("Dữ liệu được xuất sang XML")
 
 # Menu điều khiển
 def main():
@@ -190,7 +203,7 @@ def main():
         print("4. Tìm kiếm sinh viên")
         print("5. Xuất dữ liệu CSV")
         print("6. Nhập dữ liệu từ CSV")
-        
+        print("7. Xuất dữ liệu XML")
         print("12. Thoát chương trình")
 
         choice = input("Chọn chức năng: ")
@@ -207,6 +220,8 @@ def main():
             export_csv()
         elif choice == "6":
             import_csv()
+        elif choice == "7":
+            export_xml()
         elif choice == "11":
             print("Thoát chương trình!")
             break
