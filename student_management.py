@@ -199,6 +199,30 @@ def show_version():
     logging.info(f"Phiên bản: {VERSION}, Ngày build: {BUILD_DATE}")
 
 
+# Tìm kiếm sinh viên theo khoa
+def search_by_faculty():
+    students = load_data()
+    khoa = input("Nhập tên khoa cần tìm: ")
+    results = [s for s in students if s["khoa"].lower() == khoa.lower()]
+    if results:
+        for student in results:
+            print(student)
+    else:
+        print("Không tìm thấy sinh viên thuộc khoa này!")
+
+# Tìm theo khoa + tên sinh viên
+def search_by_faculty_and_name():
+    students = load_data()
+    khoa = input("Nhập tên khoa cần tìm: ")
+    ho_ten = input("Nhập họ tên sinh viên cần tìm: ")
+    results = [s for s in students if s["khoa"].lower() == khoa.lower() and ho_ten.lower() in s["ho_ten"].lower()]
+    if results:
+        for student in results:
+            print(student)
+    else:
+        print("Không tìm thấy sinh viên thuộc khoa này!")
+
+
 # Menu điều khiển
 def main():
     while True:
@@ -211,7 +235,9 @@ def main():
         print("6. Nhập dữ liệu từ CSV")
         print("7. Xuất dữ liệu XML")
         print("8. Hiển thị phiên bản ứng dụng")
-        print("12. Thoát chương trình")
+        print("9. Tìm kiếm sinh viên theo khoa")
+        print("10. Tìm kiếm sinh viên theo khoa và tên")
+        print("11. Thoát chương trình")
 
         choice = input("Chọn chức năng: ")
         
@@ -231,6 +257,10 @@ def main():
             export_xml()
         elif choice == "8":
             show_version()
+        elif choice == "9":
+            search_by_faculty()
+        elif choice == "10":
+            search_by_faculty_and_name()
         elif choice == "11":
             print("Thoát chương trình!")
             break
