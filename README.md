@@ -27,6 +27,11 @@ This is a simple student management system implemented in Python. It allows user
 - **Delete Student**: Remove a student by their ID.
 - **Update Student**: Modify existing student information.
 - **Search Student**: Find a student by ID or name.
+- **Student search by faculty and name**: Find students by their faculty and name.
+- **CSV Import/Export**: Import student data from a CSV file and export student data to a CSV file.
+- **Rename valid faculty and student status**: Update the names of faculties and student statuses to ensure they are valid and consistent.
+- **Logging mechanism**: Track and record system events and errors.
+- **Show Version**: Display the current version of the student management system and the build date.
 
 ## Data Validation
 The program performs validation for:

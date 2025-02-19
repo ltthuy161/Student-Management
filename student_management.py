@@ -20,8 +20,33 @@ BUILD_DATE = datetime.datetime.now().strftime("%Y-%m-%d")
 # Danh sách khoa hợp lệ
 VALID_KHOA = ["Khoa Luật", "Khoa Tiếng Anh thương mại", "Khoa Tiếng Nhật", "Khoa Tiếng Pháp"]
 
+def add_faculty(faculty_name):
+    if faculty_name not in VALID_KHOA:
+        VALID_KHOA.append(faculty_name)
+        return f"Khoa '{faculty_name}' đã được thêm thành công."
+    return f"Khoa '{faculty_name}' đã tồn tại."
+
+def rename_faculty(old_name, new_name):
+    if old_name in VALID_KHOA:
+        VALID_KHOA[VALID_KHOA.index(old_name)] = new_name
+        return f"Khoa '{old_name}' đã được đổi thành '{new_name}'."
+    return f"Khoa '{old_name}' không tồn tại."
+
 # Danh sách tình trạng sinh viên hợp lệ
 VALID_TINH_TRANG = ["Đang học", "Đã tốt nghiệp", "Đã thôi học", "Tạm dừng học"]
+
+def add_student_status(status_name):
+    if status_name not in VALID_TINH_TRANG:
+        VALID_TINH_TRANG.append(status_name)
+        return f"Tình trạng sinh viên '{status_name}' đã được thêm thành công."
+    return f"Tình trạng sinh viên '{status_name}' đã tồn tại."
+
+def rename_student_status(old_name, new_name):
+    if old_name in VALID_TINH_TRANG:
+        VALID_TINH_TRANG[VALID_TINH_TRANG.index(old_name)] = new_name
+        return f"Tình trạng sinh viên '{old_name}' đã được đổi thành '{new_name}'."
+    return f"Tình trạng sinh viên '{old_name}' không tồn tại."
+
 
 # Hàm tải dữ liệu từ file JSON
 def load_data():
@@ -42,6 +67,7 @@ def export_csv():
     print("Xuất dữ liệu CSV thành công!")
     logging.info("Dữ liệu được xuất sang CSV")
 
+
 # Nhập dữ liệu từ CSV
 def import_csv():
     try:
@@ -54,30 +80,37 @@ def import_csv():
     except FileNotFoundError:
         print("Không tìm thấy file CSV!")
 
+
 # Hàm lưu dữ liệu vào file JSON
 def save_data(data):
     with open(DATA_JSON, "w", encoding="utf-8") as file:
         json.dump(data, file, indent=4, ensure_ascii=False)
 
+
 # Hàm kiểm tra định dạng email
 def is_valid_email(email):
     return re.match(r"^[\w\.-]+@[\w\.-]+\.\w+$", email)
+
 
 # Hàm kiểm tra số điện thoại
 def is_valid_phone(phone):
     return re.match(r"^\d{10,11}$", phone)
 
+
 # Hàm kiểm tra giới tính
 def is_valid_gender(choice):
     return choice in ["1", "2"]
+
 
 # Hàm kiểm tra khoa
 def is_valid_khoa(khoa):
     return khoa in VALID_KHOA
 
+
 # Hàm kiểm tra tình trạng sinh viên
 def is_valid_tinh_trang(tinh_trang):
     return tinh_trang in VALID_TINH_TRANG
+
 
 # Thêm sinh viên vào danh sách
 def add_student():
@@ -131,6 +164,7 @@ def add_student():
     save_data(students)
     print("Thêm sinh viên thành công!")
 
+
 # Xóa sinh viên
 def delete_student():
     students = load_data()
@@ -138,6 +172,7 @@ def delete_student():
     students = [s for s in students if s["mssv"] != mssv]
     save_data(students)
     print("Xóa sinh viên thành công!")
+
 
 # Cập nhật thông tin sinh viên
 def update_student():
@@ -167,6 +202,7 @@ def update_student():
             return
     print("Không tìm thấy sinh viên!")
 
+
 # Tìm kiếm sinh viên
 def search_student():
     students = load_data()
@@ -178,6 +214,7 @@ def search_student():
             print(student)
     else:
         print("Không tìm thấy sinh viên!")
+
 
 # Xuất dữ liệu sang XML
 def export_xml():
@@ -192,6 +229,7 @@ def export_xml():
     tree.write(DATA_XML, encoding="utf-8", xml_declaration=True)
     print("Xuất dữ liệu XML thành công!")
     logging.info("Dữ liệu được xuất sang XML")
+
 
 # Thêm chức năng hiển thị phiên bản ứng dụng
 def show_version():
@@ -209,6 +247,7 @@ def search_by_faculty():
             print(student)
     else:
         print("Không tìm thấy sinh viên thuộc khoa này!")
+
 
 # Tìm theo khoa + tên sinh viên
 def search_by_faculty_and_name():
@@ -237,7 +276,11 @@ def main():
         print("8. Hiển thị phiên bản ứng dụng")
         print("9. Tìm kiếm sinh viên theo khoa")
         print("10. Tìm kiếm sinh viên theo khoa và tên")
-        print("11. Thoát chương trình")
+        print("11. Thêm khoa mới")
+        print("12. Đổi tên khoa")
+        print("13. Thêm tình trạng sinh viên mới")
+        print("14. Đổi tên tình trạng sinh viên")
+        print("15. Thoát chương trình")
 
         choice = input("Chọn chức năng: ")
         
@@ -262,6 +305,20 @@ def main():
         elif choice == "10":
             search_by_faculty_and_name()
         elif choice == "11":
+            khoa_name = input("Nhập tên khoa cần thêm: ")
+            print(add_faculty(khoa_name))
+        elif choice == "12":
+            old_name = input("Nhập tên khoa cần đổi: ")
+            new_name = input("Nhập tên mới: ")
+            print(rename_faculty(old_name, new_name))
+        elif choice == "13":
+            status_name = input("Nhập tên tình trạng sinh viên cần thêm: ")
+            print(add_student_status(status_name))
+        elif choice == "14":
+            old_name = input("Nhập tên tình trạng sinh viên cần đổi: ")
+            new_name = input("Nhập tên mới: ")
+            print(rename_student_status(old_name, new_name))
+        elif choice == "15":
             print("Thoát chương trình!")
             break
         else:
