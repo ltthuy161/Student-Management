@@ -183,8 +183,9 @@ class StudentManage:
                     print("Khoa không hợp lệ!")
                     return
                 if column == "tinh_trang" and not self.is_valid_tinh_trang(new_value):
-                    print("Tình trạng sinh viên không hợp lệ!")
-                    return
+                    if new_value not in VALID_STATUS_TRANSITIONS[student["tinh_trang"]]:
+                        print(f"Không thể chuyển từ {student['tinh_trang']} sang {new_value}!")
+                        return
 
                 student[column] = new_value
                 self.save_data()
