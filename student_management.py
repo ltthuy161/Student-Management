@@ -18,6 +18,7 @@ VALID_KHOA = ["Khoa Luật", "Khoa Tiếng Anh thương mại", "Khoa Tiếng Nh
 VALID_TINH_TRANG = ["Đang học", "Bảo lưu", "Tốt nghiệp", "Đình chỉ"]
 
 CONFIG_RULES_ENABLED = True
+DELETE_TIME_LIMIT = 30  # Phút
 EMAIL_DOMAIN = "@student.university.edu.vn"
 PHONE_PATTERN = re.compile(r"^(\+84|0[3|5|7|8|9])[0-9]{8}$")
 VALID_STATUS_TRANSITIONS = {
@@ -145,6 +146,7 @@ class StudentManage:
                 tinh_trang = input("Nhập tình trạng sinh viên: ")
 
         self.students.append({
+            "created_at": datetime.datetime.now().isoformat(),
             "mssv": mssv,
             "ho_ten": ho_ten,
             "ngay_sinh": ngay_sinh,
@@ -161,11 +163,21 @@ class StudentManage:
         print("Thêm sinh viên thành công!")
 
     def delete_student(self):
+        current_time = datetime.datetime.now()
         mssv = input("Nhập MSSV của sinh viên cần xóa: ")
-        self.students = [s for s in self.students if s["mssv"] != mssv]
-        self.save_data()
-        print("Xóa sinh viên thành công!")
-
+        for student in self.students:
+            if student["mssv"] == mssv:
+                created_at = datetime.datetime.fromisoformat(student["created_at"])
+                time_diff = (current_time - created_at).total_seconds() / 60
+                if time_diff > DELETE_TIME_LIMIT:
+                    print("Không thể xóa sinh viên sau 30 phút kể từ khi tạo!")
+                    return
+                self.students.remove(student)
+                self.save_data()
+                print("Xóa sinh viên thành công!")
+                return
+        print("Không tìm thấy sinh viên!")
+    
     def update_student(self):
         mssv = input("Nhập MSSV của sinh viên cần cập nhật: ")
         for student in self.students:
