@@ -39,10 +39,21 @@ class StudentManage:
         return f"Khoa '{faculty_name}' đã tồn tại."
 
     def rename_faculty(self, old_name, new_name):
+        # nếu có sinh viên trong khoa này -> không xoá được
+        if student := next((s for s in self.students if s["khoa"] == old_name), None):
+            return f"Không thể đổi tên khoa '{old_name}' thành '{new_name}' vì có sinh viên '{student['ho_ten']}' thuộc khoa này."
         if old_name in self.VALID_KHOA:
             self.VALID_KHOA[self.VALID_KHOA.index(old_name)] = new_name
             return f"Khoa '{old_name}' đã được đổi thành '{new_name}'."
         return f"Khoa '{old_name}' không tồn tại."
+    
+    def delete_falcuty(self, faculty_name):
+        if student := next((s for s in self.students if s["khoa"] == faculty_name), None):
+            return f"Không thể xóa khoa '{faculty_name}' vì có sinh viên '{student['ho_ten']}' thuộc khoa này."
+        if faculty_name in self.VALID_KHOA:
+            self.VALID_KHOA.remove(faculty_name)
+            return f"Khoa '{faculty_name}' đã được xóa."
+        return f"Khoa '{faculty_name}' không tồn tại."
 
     def add_student_status(self, status_name):
         if status_name not in self.VALID_TINH_TRANG:
@@ -51,10 +62,20 @@ class StudentManage:
         return f"Tình trạng sinh viên '{status_name}' đã tồn tại."
 
     def rename_student_status(self, old_name, new_name):
+        if student := next((s for s in self.students if s["tinh_trang"] == old_name), None):
+            return f"Không thể đổi tên tình trạng sinh viên '{old_name}' thành '{new_name}' vì có sinh viên '{student['ho_ten']}' đang ở tình trạng này."
         if old_name in self.VALID_TINH_TRANG:
             self.VALID_TINH_TRANG[self.VALID_TINH_TRANG.index(old_name)] = new_name
             return f"Tình trạng sinh viên '{old_name}' đã được đổi thành '{new_name}'."
         return f"Tình trạng sinh viên '{old_name}' không tồn tại."
+    
+    def delete_student_status(self, status_name):
+        if student := next((s for s in self.students if s["tinh_trang"] == status_name), None):
+            return f"Không thể xóa tình trạng sinh viên '{status_name}' vì có sinh viên '{student['ho_ten']}' đang ở tình trạng này."
+        if status_name in self.VALID_TINH_TRANG:
+            self.VALID_TINH_TRANG.remove(status_name)
+            return f"Tình trạng sinh viên '{status_name}' đã được xóa."
+        return f"Tình trạng sinh viên '{status_name}' không tồn tại."
 
     def load_data(self):
         try:
@@ -253,6 +274,12 @@ class StudentManage:
     def main(self):
         while True:
             print("\n--- QUẢN LÝ SINH VIÊN ---")
+            print("**TRƯỜNG ĐẠI HỌC [Tên Trường]**")
+            print("**PHÒNG CÔNG TÁC SINH VIÊN**")
+            print("📍 Địa chỉ: [Địa chỉ trường]")
+            print("📞 Điện thoại: [Số điện thoại] | 📧 Email: [Email liên hệ]")
+            print("---------------------------")
+            
             print("1. Thêm sinh viên")
             print("2. Xóa sinh viên")
             print("3. Cập nhật thông tin sinh viên")
@@ -268,6 +295,7 @@ class StudentManage:
             print("13. Thêm tình trạng sinh viên mới")
             print("14. Đổi tên tình trạng sinh viên")
             print("15. Thoát chương trình")
+            print("---------------------------")
 
             choice = input("Chọn chức năng: ")
 
