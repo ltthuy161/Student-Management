@@ -271,6 +271,115 @@ class StudentManage:
         else:
             print("Không tìm thấy sinh viên thuộc khoa này!")
 
+    def export_confirmation(self):
+        mssv = input("Nhập MSSV của sinh viên cần xuất giấy xác nhận: ")
+        student = next((s for s in self.students if s["mssv"] == mssv), None)
+        if not student:
+            print("Không tìm thấy sinh viên!")
+            return
+
+        confirmation_data = {
+            "ho_ten": student["ho_ten"],
+            "mssv": student["mssv"],
+            "ngay_sinh": student["ngay_sinh"],
+            "gioi_tinh": student["gioi_tinh"],
+            "khoa": student["khoa"],
+            "chuong_trinh": student["chuong_trinh"],
+            "khoa_hoc": student["khoa_hoc"],
+            "tinh_trang": student["tinh_trang"],
+            "ngay_cap": datetime.datetime.now().strftime("%d/%m/%Y")
+        }
+
+        self.export_to_html(confirmation_data)
+        self.export_to_md(confirmation_data)
+
+    def export_to_html(self, data):
+        html_content = f"""
+        <html>
+        <head>
+            <title>Giấy xác nhận tình trạng sinh viên</title>
+        </head>
+        <body>
+            <h1>TRƯỜNG ĐẠI HỌC [Tên Trường]</h1>
+            <h2>PHÒNG CÔNG TÁC SINH VIÊN</h2>
+            <p>📍 Địa chỉ: [Địa chỉ trường]</p>
+            <p>📞 Điện thoại: [Số điện thoại] | 📧 Email: [Email liên hệ]</p>
+            <hr>
+            <h3>GIẤY XÁC NHẬN TÌNH TRẠNG SINH VIÊN</h3>
+            <p>Trường Đại học [Tên Trường] xác nhận:</p>
+            <h4>1. Thông tin sinh viên:</h4>
+            <p>- Họ và tên: {data['ho_ten']}</p>
+            <p>- Mã số sinh viên: {data['mssv']}</p>
+            <p>- Ngày sinh: {data['ngay_sinh']}</p>
+            <p>- Giới tính: {data['gioi_tinh']}</p>
+            <p>- Khoa: {data['khoa']}</p>
+            <p>- Chương trình đào tạo: {data['chuong_trinh']}</p>
+            <p>- Khóa: {data['khoa_hoc']}</p>
+            <h4>2. Tình trạng sinh viên hiện tại:</h4>
+            <p>- {data['tinh_trang']}</p>
+            <h4>3. Mục đích xác nhận:</h4>
+            <p>- Xác nhận đang học để vay vốn ngân hàng</p>
+            <p>- Xác nhận làm thủ tục tạm hoãn nghĩa vụ quân sự</p>
+            <p>- Xác nhận làm hồ sơ xin việc / thực tập</p>
+            <p>- Xác nhận lý do khác: [Ghi rõ]</p>
+            <h4>4. Thời gian cấp giấy:</h4>
+            <p>- Giấy xác nhận có hiệu lực đến ngày: [DD/MM/YYYY]</p>
+            <p>📍 Xác nhận của Trường Đại học [Tên Trường]</p>
+            <p>📅 Ngày cấp: {data['ngay_cap']}</p>
+            <p>🖋 Trưởng Phòng Đào Tạo</p>
+            <p>(Ký, ghi rõ họ tên, đóng dấu)</p>
+        </body>
+        </html>
+        """
+        with open("confirmation.html", "w", encoding="utf-8") as file:
+            file.write(html_content)
+        print("Xuất giấy xác nhận ra HTML thành công!")
+
+    def export_to_md(self, data):
+        md_content = f"""
+        **TRƯỜNG ĐẠI HỌC [Tên Trường]**  
+        **PHÒNG CÔNG TÁC SINH VIÊN**  
+        📍 Địa chỉ: [Địa chỉ trường]  
+        📞 Điện thoại: [Số điện thoại] | 📧 Email: [Email liên hệ]  
+
+        ---
+
+        ### **GIẤY XÁC NHẬN TÌNH TRẠNG SINH VIÊN**  
+
+        Trường Đại học [Tên Trường] xác nhận:  
+
+        **1. Thông tin sinh viên:**  
+        - **Họ và tên:** {data['ho_ten']}  
+        - **Mã số sinh viên:** {data['mssv']}  
+        - **Ngày sinh:** {data['ngay_sinh']}  
+        - **Giới tính:** {data['gioi_tinh']}  
+        - **Khoa:** {data['khoa']}  
+        - **Chương trình đào tạo:** {data['chuong_trinh']}  
+        - **Khóa:** {data['khoa_hoc']}  
+
+        **2. Tình trạng sinh viên hiện tại:** 
+        - {data['tinh_trang']} 
+
+        **3. Mục đích xác nhận:**  
+        - Xác nhận đang học để vay vốn ngân hàng  
+        - Xác nhận làm thủ tục tạm hoãn nghĩa vụ quân sự  
+        - Xác nhận làm hồ sơ xin việc / thực tập 
+        - Xác nhận lý do khác: [Ghi rõ]  
+
+        **4. Thời gian cấp giấy:**  
+        - Giấy xác nhận có hiệu lực đến ngày: [DD/MM/YYYY]  
+
+        📍 **Xác nhận của Trường Đại học [Tên Trường]**  
+
+        📅 Ngày cấp: {data['ngay_cap']}  
+
+        🖋 **Trưởng Phòng Đào Tạo**  
+        (Ký, ghi rõ họ tên, đóng dấu)  
+        """
+        with open("confirmation.md", "w", encoding="utf-8") as file:
+            file.write(md_content)
+        print("Xuất giấy xác nhận ra Markdown thành công!")
+
     def main(self):
         while True:
             print("\n--- QUẢN LÝ SINH VIÊN ---")
@@ -292,9 +401,12 @@ class StudentManage:
             print("10. Tìm kiếm sinh viên theo khoa và tên")
             print("11. Thêm khoa mới")
             print("12. Đổi tên khoa")
-            print("13. Thêm tình trạng sinh viên mới")
-            print("14. Đổi tên tình trạng sinh viên")
-            print("15. Thoát chương trình")
+            print("13. Xóa khoa")
+            print("14. Thêm tình trạng sinh viên mới")
+            print("15. Đổi tên tình trạng sinh viên")
+            print("16. Xóa tình trạng sinh viên")
+            print("17. Xuất giấy xác nhận")
+            print("18. Thoát chương trình")
             print("---------------------------")
 
             choice = input("Chọn chức năng: ")
@@ -327,13 +439,21 @@ class StudentManage:
                 new_name = input("Nhập tên mới: ")
                 print(self.rename_faculty(old_name, new_name))
             elif choice == "13":
+                khoa_name = input("Nhập tên khoa cần xóa: ")
+                print(self.delete_falcuty(khoa_name))
+            elif choice == "14":
                 status_name = input("Nhập tên tình trạng sinh viên cần thêm: ")
                 print(self.add_student_status(status_name))
-            elif choice == "14":
+            elif choice == "15":
                 old_name = input("Nhập tên tình trạng sinh viên cần đổi: ")
                 new_name = input("Nhập tên mới: ")
                 print(self.rename_student_status(old_name, new_name))
-            elif choice == "15":
+            elif choice == "16":
+                status_name = input("Nhập tên tình trạng sinh viên cần xóa: ")
+                print(self.delete_student_status(status_name))
+            elif choice == "17":
+                self.export_confirmation()
+            elif choice == "18":
                 print("Thoát chương trình!")
                 break
             else:
