@@ -9,26 +9,27 @@ import logging
 logging.basicConfig(filename="student_management.log", level=logging.INFO,
                     format="%(asctime)s - %(levelname)s - %(message)s")
 
-DATA_JSON = "students.json"
-DATA_CSV = "students.csv"
-DATA_XML = "students.xml"
-VERSION = "2.0"
-BUILD_DATE = datetime.datetime.now().strftime("%Y-%m-%d")
-VALID_KHOA = ["Khoa Luật", "Khoa Tiếng Anh thương mại", "Khoa Tiếng Nhật", "Khoa Tiếng Pháp"]
-VALID_TINH_TRANG = ["Đang học", "Bảo lưu", "Tốt nghiệp", "Đình chỉ"]
-
-CONFIG_RULES_ENABLED = True
-DELETE_TIME_LIMIT = 30  # Phút
-EMAIL_DOMAIN = "@student.university.edu.vn"
-PHONE_PATTERN = re.compile(r"^(\+84|0[3|5|7|8|9])[0-9]{8}$")
-VALID_STATUS_TRANSITIONS = {
-    "Đang học": ["Bảo lưu", "Tốt nghiệp", "Đình chỉ"],
-    "Bảo lưu": ["Đang học", "Đình chỉ"],
-    "Đình chỉ": [],
-    "Tốt nghiệp": []
-}
-
 class StudentManage:
+
+    DATA_JSON = "students.json"
+    DATA_CSV = "students.csv"
+    DATA_XML = "students.xml"
+    VERSION = "2.0"
+    BUILD_DATE = datetime.datetime.now().strftime("%Y-%m-%d")
+    VALID_KHOA = ["Khoa Luật", "Khoa Tiếng Anh thương mại", "Khoa Tiếng Nhật", "Khoa Tiếng Pháp"]
+    VALID_TINH_TRANG = ["Đang học", "Bảo lưu", "Tốt nghiệp", "Đình chỉ"]
+
+    CONFIG_RULES_ENABLED = True
+    DELETE_TIME_LIMIT = 30  # Phút
+    EMAIL_DOMAIN = "@student.university.edu.vn"
+    PHONE_PATTERN = re.compile(r"^(\+84|0[3|5|7|8|9])[0-9]{8}$")
+    VALID_STATUS_TRANSITIONS = {
+        "Đang học": ["Bảo lưu", "Tốt nghiệp", "Đình chỉ"],
+        "Bảo lưu": ["Đang học", "Đình chỉ"],
+        "Đình chỉ": [],
+        "Tốt nghiệp": []
+    }
+
     def __init__(self):
         self.students = self.load_data()
 
@@ -108,10 +109,10 @@ class StudentManage:
             json.dump(self.students, file, indent=4, ensure_ascii=False)
 
     def is_valid_email(self, email):
-        return email.endswith(EMAIL_DOMAIN)
+        return email.endswith(self.EMAIL_DOMAIN)
 
     def is_valid_phone(self, phone):
-        return PHONE_PATTERN.match(phone)
+        return self.PHONE_PATTERN.match(phone)
 
     def is_valid_gender(self, choice):
         return choice in ["1", "2"]
@@ -124,7 +125,7 @@ class StudentManage:
 
     def add_student(self):
         mssv = input("Nhập MSSV: ")
-        if CONFIG_RULES_ENABLED:
+        if self.CONFIG_RULES_ENABLED:
             while any(s["mssv"] == mssv for s in self.students):
                 print("MSSV đã tồn tại!")
                 mssv = input("Nhập MSSV: ")
@@ -133,14 +134,14 @@ class StudentManage:
         ngay_sinh = input("Nhập ngày sinh (YYYY-MM-DD): ")
 
         gioi_tinh = input("Nhập giới tính (1: Nữ, 2: Nam): ")
-        if CONFIG_RULES_ENABLED:
+        if self.CONFIG_RULES_ENABLED:
             while not self.is_valid_gender(gioi_tinh):
                 print("Giới tính không hợp lệ! Vui lòng nhập 1 (Nữ) hoặc 2 (Nam).")
                 gioi_tinh = input("Nhập giới tính (1: Nữ, 2: Nam): ")
         gioi_tinh = "Nữ" if gioi_tinh == "1" else "Nam"
 
         khoa = input("Nhập khoa: ")
-        if CONFIG_RULES_ENABLED:
+        if self.CONFIG_RULES_ENABLED:
             while not self.is_valid_khoa(khoa):
                 print("Khoa không hợp lệ! Danh sách khoa hợp lệ: ", self.VALID_KHOA)
                 khoa = input("Nhập khoa: ")
@@ -149,19 +150,19 @@ class StudentManage:
         chuong_trinh = input("Nhập chương trình: ")
         dia_chi = input("Nhập địa chỉ: ")
         email = input("Nhập email: ")
-        if CONFIG_RULES_ENABLED:
+        if self.CONFIG_RULES_ENABLED:
             while not self.is_valid_email(email):
                 print("Email không hợp lệ!")
                 email = input("Nhập email: ")
 
         so_dien_thoai = input("Nhập số điện thoại: ")
-        if CONFIG_RULES_ENABLED:
+        if self.CONFIG_RULES_ENABLED:
             while not self.is_valid_phone(so_dien_thoai):
                 print("Số điện thoại không hợp lệ!")
                 so_dien_thoai = input("Nhập số điện thoại: ")
 
         tinh_trang = input("Nhập tình trạng sinh viên: ")
-        if CONFIG_RULES_ENABLED:
+        if self.CONFIG_RULES_ENABLED:
             while not self.is_valid_tinh_trang(tinh_trang):
                 print("Tình trạng sinh viên không hợp lệ! Danh sách hợp lệ: ", self.VALID_TINH_TRANG)
                 tinh_trang = input("Nhập tình trạng sinh viên: ")
@@ -190,7 +191,7 @@ class StudentManage:
             if student["mssv"] == mssv:
                 created_at = datetime.datetime.fromisoformat(student["created_at"])
                 time_diff = (current_time - created_at).total_seconds() / 60
-                if time_diff > DELETE_TIME_LIMIT:
+                if time_diff > self.DELETE_TIME_LIMIT:
                     print("Không thể xóa sinh viên sau 30 phút kể từ khi tạo!")
                     return
                 self.students.remove(student)
